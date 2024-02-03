@@ -15,6 +15,12 @@ The goal of this repository will be to follow the tracks of [awwsmm's repo](http
 Today is the first day of Daily Bevy.
 
 ## Today's example
-Today's focus is going to be on the [hello world](https://github.com/bevyengine/bevy/blob/main/examples/hello_world.rs) example from Bevy's repository.
+Today's focus is going to be on the [keyboard input](https://github.com/bevyengine/bevy/blob/main/examples/input/keyboard_input.rs) example from Bevy's repository.
 
-So to say, today's goal was simply to decipher basic app creation and running. That can be simplified by first adding a resource that let's Bevy translate type into literals (reflection), then add a few schedulers (Main and FixedUpdateLoop), add an AppExit listener in Main and add one simple system (a function called by a scheduler) before running the App.
+Same as yesterday, the default plugins are added to the app. The difference is in the argument given to the system. This time we use a `Res<Input<KeyCode>>`, Res (or ResMut if need mutability) allowing us to access a Resource (a type in the world inserted as a singleton as the documentation says). The Res holds an Input that can be anything "press-able" that in that case is a KeyCode (keyboard input).
+
+Today's example only introduce a few new types.
+
+Got to read a bit the doc about Worlds, InputPlugin and Ticks as well.
+
+PS: awwsmm seems to have had some struggle with the inputs, but since I tried, for the first time, today's example on Windows I seem to having been exampted of any trouble whatsoever. But looks more like I used the right Bevy version tag from the get go.
