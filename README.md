@@ -15,6 +15,17 @@ The goal of this repository will be to follow the tracks of [awwsmm's repo](http
 Today is the first day of Daily Bevy.
 
 ## Today's example
-Today's focus is going to be on the [hello world](https://github.com/bevyengine/bevy/blob/main/examples/hello_world.rs) example from Bevy's repository.
+Today's focus is going to be different, we are going to review a few articles about Camera2dBundle.
 
-So to say, today's goal was simply to decipher basic app creation and running. That can be simplified by first adding a resource that let's Bevy translate type into literals (reflection), then add a few schedulers (Main and FixedUpdateLoop), add an AppExit listener in Main and add one simple system (a function called by a scheduler) before running the App.
+The articles:
+- https://bevy-cheatbook.github.io/graphics/camera.html
+- https://bevy-cheatbook.github.io/2d/camera.html
+- https://taintedcoders.com/bevy/cameras/
+
+### First article
+Let's start here: https://taintedcoders.com/bevy/cameras/
+
+This article gives insight about how the different components of the Camera2dBundle work.
+Also about what is a Frustum, how to use it and other useful informations.
+
+Also played a bit with mouse movements + positions and also tried to add 2 Camera3d (could be used to have a 3d minimap for example)
