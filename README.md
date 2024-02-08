@@ -15,6 +15,12 @@ The goal of this repository will be to follow the tracks of [awwsmm's repo](http
 Today is the first day of Daily Bevy.
 
 ## Today's example
-Today's focus is going to be on the [hello world](https://github.com/bevyengine/bevy/blob/main/examples/hello_world.rs) example from Bevy's repository.
+Let's continue working onto Camera2dBundle.
+Focus was more into trying stuff onto the Camera and using a new Entity: the `Text`.
+In this example, I mapped the keyboard arrows onto camera movements, the mouse wheel onto camera zoom (since camera is orthogonal I'm scaling x and y) and left +  right mouse clicks onto camera rotation.
 
-So to say, today's goal was simply to decipher basic app creation and running. That can be simplified by first adding a resource that let's Bevy translate type into literals (reflection), then add a few schedulers (Main and FixedUpdateLoop), add an AppExit listener in Main and add one simple system (a function called by a scheduler) before running the App.
+The text that is printed is using the Text entity that is created using the Text2DBundle. In that bundle the only component that we change is the Text one by adding a font (loaded from assets folder) and the selections (the strings that will be visible).
+
+Same as yesterday, we are using a tuple when spawning the entities that let's use add a label onto them that we then use in our systems.
+
+The systems use the Transform components from the 2dCamera to do the translations/rotations.
