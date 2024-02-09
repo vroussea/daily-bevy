@@ -9,7 +9,7 @@ fn main() {
         .add_systems(
             Update,
             (
-                change_text,
+                mouse_coordinates,
                 keyboard_input_system,
                 mouse_input_system,
                 mouse_scroll_event_system,
@@ -45,7 +45,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     ));
 }
 
-fn change_text(window_query: Query<&Window>, mut text_query: Query<&mut Text, With<MyText>>) {
+fn mouse_coordinates(window_query: Query<&Window>, mut text_query: Query<&mut Text, With<MyText>>) {
     let window = window_query.single();
     if let Some(world_position) = window.cursor_position() {
         let mut text = text_query.single_mut();
@@ -86,14 +86,12 @@ fn mouse_input_system(
 ) {
     if mouse_input.pressed(MouseButton::Right) {
         let mut camera = camera_query.single_mut();
-        let rotation = Quat::from_rotation_z(0.05);
-        camera.rotate(rotation);
+        camera.rotate_z(0.05);
     }
 
     if mouse_input.pressed(MouseButton::Left) {
         let mut camera = camera_query.single_mut();
-        let rotation = Quat::from_rotation_z(-0.05);
-        camera.rotate(rotation);
+        camera.rotate_z(-0.05);
     }
 
     if mouse_input.pressed(MouseButton::Middle) {
