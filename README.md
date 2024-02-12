@@ -15,6 +15,12 @@ The goal of this repository will be to follow the tracks of [awwsmm's repo](http
 Today is the first day of Daily Bevy.
 
 ## Today's example
-Today's focus is going to be on the [hello world](https://github.com/bevyengine/bevy/blob/main/examples/hello_world.rs) example from Bevy's repository.
+Today's focus will be on the [2d/text2d](https://github.com/bevyengine/bevy/blob/v0.12.1/examples/2d/text2d.rs) example.
 
-So to say, today's goal was simply to decipher basic app creation and running. That can be simplified by first adding a resource that let's Bevy translate type into literals (reflection), then add a few schedulers (Main and FixedUpdateLoop), add an AppExit listener in Main and add one simple system (a function called by a scheduler) before running the App.
+This one shpows us a lot of stuff about 2d text bundles and also adds a few twists using systems to rotate/translate/scale the text. Before showing us how to bound text inside a sprite and then how to use anchors to choose where the text should be located given a transform.
+
+Awwsmm also checks a bit more onto the plugins to see how they are built, what the finish() and cleanup() methods do etc.
+
+We also have a look at children entities.
+
+I decided to change the scaling system to change the font size as to not make it so pixelated.
