@@ -15,6 +15,10 @@ The goal of this repository will be to follow the tracks of [awwsmm's repo](http
 Today is the first day of Daily Bevy.
 
 ## Today's example
-Today's focus is going to be on the [hello world](https://github.com/bevyengine/bevy/blob/main/examples/hello_world.rs) example from Bevy's repository.
+Today's focus is going to be on the [`button` example](https://github.com/bevyengine/bevy/blob/v0.12.1/examples/ui/button.rs) from Bevy's repository.
 
-So to say, today's goal was simply to decipher basic app creation and running. That can be simplified by first adding a resource that let's Bevy translate type into literals (reflection), then add a few schedulers (Main and FixedUpdateLoop), add an AppExit listener in Main and add one simple system (a function called by a scheduler) before running the App.
+This example focuses on nexted entities (parent and child), on Ui nodes and also on a new resource called WinitSettings::desktop_app() that let's us set the windows to update only every 60 seconds instead of as fast as possible or when the user interact with it, as opposed as a game that would require constant update.
+
+We also have a new filter ( `Changed<Interaction>` ) on the Query that let's us know when the entities returned by the query has been interacted with (so the `Interaction` component has been created or updated).
+
+The last noteworthy piece of new information we got today is the `text_query.get_mut(children[0]).unwrap();` part. It uses get_mut on the query to retrieve a child entity from it.
