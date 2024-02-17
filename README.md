@@ -11,7 +11,7 @@ Original ones can be found [here](https://github.com/awwsmm/daily-bevy/branches)
 The goal of this repository will be to follow the tracks of [awwsmm's repo](https://github.com/awwsmm/daily-bevy/blob/master/README.md) that focuses on working on one example from Bevy repo per day.2
 
 ## Today's example
-Today we are just compiling yesterday's app in web assembly.
+Today we are just compiling yesterday's app (also adding a 2dText) in web assembly.
 You'll first need to add the target using rustup:
 ```
     rustup target add wasm32-unknown-unknown
