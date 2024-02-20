@@ -10,11 +10,12 @@ Original ones can be found [here](https://github.com/awwsmm/daily-bevy/branches)
 ### Disclaimer
 The goal of this repository will be to follow the tracks of [awwsmm's repo](https://github.com/awwsmm/daily-bevy/blob/master/README.md) that focuses on working on one example from Bevy repo per day.2
 
-## Hello, Bevy!
-
-Today is the first day of Daily Bevy.
-
 ## Today's example
-Today's focus is going to be on the [hello world](https://github.com/bevyengine/bevy/blob/main/examples/hello_world.rs) example from Bevy's repository.
+Today's focus is going to be on the [`scene` example](https://github.com/bevyengine/bevy/blob/v0.12.1/examples/scene/scene.rs) example from Bevy's repository.
 
-So to say, today's goal was simply to decipher basic app creation and running. That can be simplified by first adding a resource that let's Bevy translate type into literals (reflection), then add a few schedulers (Main and FixedUpdateLoop), add an AppExit listener in Main and add one simple system (a function called by a scheduler) before running the App.
+This example is about scenes. A scene is somewhat like a snapshot of a world, by that it means that it holds all the resources/entities the world has. We then use this scene to create a copy of the world in a file will all entities/resources saved in a seralized [`RON`](https://github.com/ron-rs/ron) format. It looks like JSON but a bit more modern and rustlike. We can also load a scene file using the asset server loading method.
+
+To create a scene you need to make sure the entities' components and the resources types that make the world are saved within the App (using .register_type() method) and that the components/resources also derive the Reflect trait that gives them dynamic serialization/deserialization/default (default can be manually implemented to allow choosing members of the structs to be ignored by implementing the FromWorld trait).
+We then need to use the Reflect derive macro to add respectively the component and resource traits to also reflects their behaviors.
+
+And that's it for today.
