@@ -10,11 +10,16 @@ Original ones can be found [here](https://github.com/awwsmm/daily-bevy/branches)
 ### Disclaimer
 The goal of this repository will be to follow the tracks of [awwsmm's repo](https://github.com/awwsmm/daily-bevy/blob/master/README.md) that focuses on working on one example from Bevy repo per day.2
 
-## Hello, Bevy!
-
-Today is the first day of Daily Bevy.
-
 ## Today's example
-Today's focus is going to be on the [hello world](https://github.com/bevyengine/bevy/blob/main/examples/hello_world.rs) example from Bevy's repository.
+Today's focus is going to be on the [`reflection` example](https://github.com/bevyengine/bevy/blob/v0.12.1/examples/reflection/reflection.rs) from Bevy's repository.
 
-So to say, today's goal was simply to decipher basic app creation and running. That can be simplified by first adding a resource that let's Bevy translate type into literals (reflection), then add a few schedulers (Main and FixedUpdateLoop), add an AppExit listener in Main and add one simple system (a function called by a scheduler) before running the App.
+This example is all about the `Reflect` trait that allows us to do a lot of dynamic stuff rust usually doesn't let us do.
+Firstly we derive Reflect on a struct called Foo, that allows use to retrieve fields from it using a string. We can also retrieve mutable fields.
+
+Secondly we use a DynamicStruct that let's us create a struct that have dynamic fields, we can add new fields to that struct on the go. and then apply that struct to another struct, here Foo, so that all matching fields are applied to it.
+
+Then we use Reflect to serialize the struct (into a RON serialized data). Serde Serialize and Deserialize traits are usable automatically by any type that derives Reflect.
+
+Finally we deserialize the data using a similar way into a boxed dyn Reflect type.
+
+We can also apply that dyn Reflect data to our Foo structure.
