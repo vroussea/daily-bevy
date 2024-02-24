@@ -10,10 +10,6 @@ Original ones can be found [here](https://github.com/awwsmm/daily-bevy/branches)
 ### Disclaimer
 The goal of this repository will be to follow the tracks of [awwsmm's repo](https://github.com/awwsmm/daily-bevy/blob/master/README.md) that focuses on working on one example from Bevy repo per day.2
 
-## Hello, Bevy!
-
-Today is the first day of Daily Bevy.
-
 ## Today's example
 Today's focus is going to be on the [`game_menu`](https://github.com/bevyengine/bevy/blob/release-0.12.1/examples/games/game_menu.rs) example example from Bevy's repository.
 
@@ -77,3 +73,48 @@ Here is the definition:
 /// # app.run(&mut world);
 /// # assert!(world.resource::<DidRun>().0);
 ```
+So some kind of filter, `in_state()` seems to be part of a list of functions that gives different kind of common conditions like which state the game currently is in.
+
+So when entering the splash state the splash_setup system is called. It sets up a node with a marker component `OnSplashScreen` that might be used later to remove all the entities related to that state. That nodes has an `ImageBundle` child that take the icon in the assets folder using the `AssetServer`. It also sets the size of the logo in a `Style` component. Then it inserts a resource into the world called SplashTimer, set on 1 second. That will surely change the state of the game during an update once the timer is done.
+
+In the update system of splash we retrieve a mutable resource on the game's state, a time resource and a mutable resource with the timer set in the setup.
+We then advance the timer by the time elapsed since last update, and if that ends up finishing the timer, we then change the game state to menu. Pretty simple.
+
+As for the last system, we are using a different system, it is a generic system that takes a query of an entity with a T, T being any type of Component, it also takes a `Commands`. All it does is removing any entity with that T marker component. In our case it is the `OnSplashScreen` marker. Since we left the Splash State.
+
+Now let's advance to our next state:
+
+### menu
+
+The menu `GameState` is the most complex one of all three of them. It has 5 different screens if you count the disabled one. All of them expressed by a new type of states : the ``MenuState``, with disabled being the default.
+
+We have a few marker `Component`s that are used to clean the screen after exiting one of those states. A few constant `Color`s for the buttons, another marker `Component` that is used to mark which setting is selected, and an enum `Component` that allows to give an action to all button clicks.
+
+Here is a diagram on how the FSM (finish state machine) works :
+
+![](assets/diagram.png)
+
+In the `MenuPlugin` build method, we see that the menu `MenuState` will first be disabled, then after splash or game `GameState` are exited for menu `GameState` we go to Main `MenuState`, from which we can then move to settings `MenuState`, game `GameState` (that would disabled `MenuState` again) or exit the App. From the settings `MenuState` we can move back to main `MenuState` or go deeper to the sound and display settings `MenuState, from which we can only go back to settings `MenuState`.
+
+Each Screen related to a `MenuState` has an `OnEnter` and `OnExit` system to, accordingly, setup the screen and clean it. The display and volume settings also have an `Update` system, plus two other `Update` systems that run if the `GameState` is on menu. (Read [awwsmm](https://github.com/awwsmm/daily-bevy/tree/games/game_menu_3) for more info about screen setups and the UI design used here)
+Contrary to game and splash states, menu doesn't have an OnExit system, but instead relies on the FSM, since the exit point of menu state is the main `MenuState`.
+
+The button_system allows us change the background color of the different buttons depending on the current interaction with said buttons.
+
+The setting_button allows us to modify an entity that had an `Interaction::Pressed` with a button `Component`and add the `SelectedOption` marker `Component` to it if it isn't already selected, while also removing that marker from the previously selected entity. Then it changes the corresponding setting to the new selected one. This function is generic as it accepts any type T that derives `Resource`, `Component`, `PartialEq` and `Copy`. So `DisplayQuality` or `Volume` that are both settings that can be modified in the menu.
+
+The menu_action binds each button action to state change (in `GameState` and/or `MenuState`) with a special case for Quit which write an `AppExit` event using the `EventWriter<AppExit>` that makes the app exit. This just makes the link between button pressing and the FSM diagram possibilities from earlier.
+
+### game
+
+Compared to menu, this state is pretty straightforward and simple:
+- `OnEnter` and `OnExit` schedules
+- two systems with one being on Update schedule with a condition for being in `GameState::Game` state.
+
+The first system, game_setup, resemble a lot what we saw in menu state, but this time only having text, and showing the two Resources : Volume and DisplayQuality. It also adds a 5 seconds timer at the end.
+
+The second system looks a lot like what we already saw, it just move the timer by the time since last update, and if the timer is finished it changes the `GameState` to menu
+
+## final word
+
+That was a really big example with lot of different new things inside it. Awwsmm also questions what could be the next steps if we want to learn how to make a proper game. He talks about how to save game maybe by exporting in a file, or saving in a cookie in case of a WASM app. Maybe even having a server to which we would send the save ? He also questions about a possible mobile app.
