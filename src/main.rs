@@ -1,20 +1,24 @@
-// source: https://github.com/bevyengine/bevy/blob/v0.12.1/examples/ui/button.rs
+// based on: https://github.com/bevyengine/bevy/blob/v0.12.1/examples/ui/button.rs
 
 //! This example illustrates how to create a button that changes color and text based on its
 //! interaction state.
 
-// This lint usually gives bad advice in the context of Bevy -- hiding complex queries behind
-// type aliases tends to obfuscate code while offering no improvement in code cleanliness.
-#![allow(clippy::type_complexity)]
-
 use bevy::{prelude::*, winit::WinitSettings};
+use bevy_pkv::PkvStore;
+use serde::{Deserialize, Serialize};
+
+#[derive(Default, Serialize, Deserialize, Clone, Resource)]
+struct State {
+    clicks: u128,
+}
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         // Only run the app when there is user input. This will significantly reduce CPU/GPU use.
         .insert_resource(WinitSettings::desktop_app())
-        .add_systems(Startup, setup)
+        .insert_resource(PkvStore::new("Daily Bevy", "WASM Persistence"))
+        .add_systems(Startup, (setup, state_setup))
         .add_systems(Update, button_system)
         .run();
 }
@@ -22,6 +26,19 @@ fn main() {
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
 const PRESSED_BUTTON: Color = Color::rgb(0.35, 0.75, 0.35);
+
+fn state_setup(mut pkv: ResMut<PkvStore>, mut commands: Commands) {
+    let state = match pkv.get::<State>("state") {
+        Ok(state) => state,
+        Err(_) => {
+            pkv.set("state", &State::default())
+                .expect("failed to store state");
+            pkv.get::<State>("state").expect("failed to retrieve state")
+        }
+    };
+
+    commands.insert_resource(state);
+}
 
 fn button_system(
     mut interaction_query: Query<
@@ -34,6 +51,8 @@ fn button_system(
         (Changed<Interaction>, With<Button>),
     >,
     mut text_query: Query<&mut Text>,
+    mut pkv: ResMut<PkvStore>,
+    mut state: ResMut<State>,
 ) {
     for (interaction, mut color, mut border_color, children) in &mut interaction_query {
         let mut text = text_query.get_mut(children[0]).unwrap();
@@ -42,6 +61,10 @@ fn button_system(
                 text.sections[0].value = "Press".to_string();
                 *color = PRESSED_BUTTON.into();
                 border_color.0 = Color::RED;
+
+                state.clicks += 1;
+                let clone = state.clone();
+                pkv.set("state", &clone).expect("error saving state");
             }
             Interaction::Hovered => {
                 text.sections[0].value = "Hover".to_string();
@@ -49,7 +72,9 @@ fn button_system(
                 border_color.0 = Color::WHITE;
             }
             Interaction::None => {
-                text.sections[0].value = "Button".to_string();
+                let clicks = state.clicks;
+
+                text.sections[0].value = format!("Clicked {} times!", clicks);
                 *color = NORMAL_BUTTON.into();
                 border_color.0 = Color::BLACK;
             }
@@ -58,20 +83,6 @@ fn button_system(
 }
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let font = asset_server.load("fonts/FiraSans-Bold.ttf");
-    let text_style = TextStyle {
-        font: font.clone(),
-        font_size: 60.0,
-        color: Color::WHITE,
-    };
-    let text_alignment = TextAlignment::Left;
-    // Demonstrate changing translation
-    commands.spawn((Text2dBundle {
-        text: Text::from_section("hello world", text_style.clone()).with_alignment(text_alignment),
-        transform: Transform::from_xyz(-200., 200., 1.),
-        ..default()
-    },));
-
     // ui camera
     commands.spawn(Camera2dBundle::default());
     commands
@@ -89,7 +100,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             parent
                 .spawn(ButtonBundle {
                     style: Style {
-                        width: Val::Px(150.0),
+                        width: Val::Px(300.0),
                         height: Val::Px(65.0),
                         border: UiRect::all(Val::Px(5.0)),
                         // horizontally center child text

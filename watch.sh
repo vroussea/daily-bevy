@@ -1,0 +1,1 @@
+cargo watch -x "build --release --target wasm32-unknown-unknown && .\script.sh"

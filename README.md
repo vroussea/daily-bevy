@@ -11,28 +11,14 @@ Original ones can be found [here](https://github.com/awwsmm/daily-bevy/branches)
 The goal of this repository will be to follow the tracks of [awwsmm's repo](https://github.com/awwsmm/daily-bevy/blob/master/README.md) that focuses on working on one example from Bevy repo per day.2
 
 ## Today's example
-Today we are just compiling yesterday's app (also adding a 2dText) in web assembly.
-You'll first need to add the target using rustup:
-```
-    rustup target add wasm32-unknown-unknown
-```
-Install the wasm bindgen cli:
-```
-    cargo install wasm-bindgen-cli
-```
-Now build the project for the wasm target:
-```
-    cargo build --release --target wasm32-unknown-unknown
-```
-And finally generate the js file that's going to be used in the example.html file. (files names are arbitrary, daily-bevy is the repo name):
-```
-    wasm-bindgen --out-name wasm_example --out-dir target --target web target/wasm32-unknown-unknown/release/daily-bevy.wasm
-```
-Serve the file using a server (here using python):
-```
-    python -m http.server
-```
-and open the html file from the server in your browser (here on windows):
-```
-    http://localhost:8000/example.html
-```
+Today we worked again on the WASM example by trying to save how many times the button was clicked, we are using bevy_pkv to do so, it uses the local Web Storage.
+
+We have a State `Resource` that stores the amount of times the button was clicked, it is initialized inside the state_setup system that tries to retrieve the stored value (get) and if doesn't exist creates it (set).
+
+in the button_system every time the button is pressed we modify the click counter inside the state `Resource` and save it (set).
+
+If the button is not interacted with we simply show how many times it was pressed so far.
+
+I changed Awwsmm example by first fixing the value not being set inside the storage. My guess is that he first tried to set it before retrieving it and didn't check if someone using his example would have an issue with this or not. Thus why i created this new setup system.
+
+This way I also reduce the amount of time we use get (by 2) on the state we are retrieving, should improve performance. Might be possible to improve it furthermore.
